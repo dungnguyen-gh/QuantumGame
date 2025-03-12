@@ -1,0 +1,29 @@
+input
+{
+	FPVector2 Direction;
+	button Attack;
+	button SpawnBullet;
+}
+
+component PlayerInfo
+{
+	player_ref PlayerRef;
+	FP Damage;
+	FP Health;
+	FP Speed;
+	asset_ref<EntityPrototype> Bullet;
+	PlayerFacing Facing;
+}
+
+component BulletInfo
+{
+	FPVector2 Direction;
+	EntityRef Owner;
+	PlayerFacing Facing;
+	FP Speed;
+}
+
+enum PlayerFacing
+{
+	Left, Right
+}
