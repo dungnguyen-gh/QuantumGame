@@ -68,6 +68,7 @@ namespace Quantum.Prototypes.Unity {
     public Quantum.QuantumEntityPrototype Owner;
     public Quantum.QEnum32<PlayerFacing> Facing;
     public FP Speed;
+    public FP ExistTime;
     partial void ConvertUser(Quantum.QuantumEntityPrototypeConverter converter, ref Quantum.Prototypes.BulletInfoPrototype prototype);
     public override Quantum.Prototypes.BulletInfoPrototype Convert(Quantum.QuantumEntityPrototypeConverter converter) {
       var result = new Quantum.Prototypes.BulletInfoPrototype();
@@ -75,6 +76,7 @@ namespace Quantum.Prototypes.Unity {
       converter.Convert(this.Owner, out result.Owner);
       converter.Convert(this.Facing, out result.Facing);
       converter.Convert(this.Speed, out result.Speed);
+      converter.Convert(this.ExistTime, out result.ExistTime);
       ConvertUser(converter, ref result);
       return result;
     }

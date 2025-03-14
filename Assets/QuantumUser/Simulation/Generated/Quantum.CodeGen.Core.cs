@@ -763,17 +763,53 @@ namespace Quantum {
     }
   }
   [StructLayout(LayoutKind.Explicit)]
-  public unsafe partial struct BulletInfo : Quantum.IComponent {
-    public const Int32 SIZE = 40;
+  public unsafe partial struct BossInfo : Quantum.IComponent {
+    public const Int32 SIZE = 48;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(24)]
+    public FP Time;
+    [FieldOffset(0)]
+    public FP ChangeDirectionTime;
+    [FieldOffset(32)]
+    public FPVector2 Direction;
+    [FieldOffset(16)]
+    public FP Health;
+    [FieldOffset(8)]
+    public FP CurrentHealth;
+    public override Int32 GetHashCode() {
+      unchecked { 
+        var hash = 4673;
+        hash = hash * 31 + Time.GetHashCode();
+        hash = hash * 31 + ChangeDirectionTime.GetHashCode();
+        hash = hash * 31 + Direction.GetHashCode();
+        hash = hash * 31 + Health.GetHashCode();
+        hash = hash * 31 + CurrentHealth.GetHashCode();
+        return hash;
+      }
+    }
+    public static void Serialize(void* ptr, FrameSerializer serializer) {
+        var p = (BossInfo*)ptr;
+        FP.Serialize(&p->ChangeDirectionTime, serializer);
+        FP.Serialize(&p->CurrentHealth, serializer);
+        FP.Serialize(&p->Health, serializer);
+        FP.Serialize(&p->Time, serializer);
+        FPVector2.Serialize(&p->Direction, serializer);
+    }
+  }
+  [StructLayout(LayoutKind.Explicit)]
+  public unsafe partial struct BulletInfo : Quantum.IComponent {
+    public const Int32 SIZE = 48;
+    public const Int32 ALIGNMENT = 8;
+    [FieldOffset(32)]
     public FPVector2 Direction;
     [FieldOffset(8)]
     public EntityRef Owner;
     [FieldOffset(0)]
     public PlayerFacing Facing;
-    [FieldOffset(16)]
+    [FieldOffset(24)]
     public FP Speed;
+    [FieldOffset(16)]
+    public FP ExistTime;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 3049;
@@ -781,6 +817,7 @@ namespace Quantum {
         hash = hash * 31 + Owner.GetHashCode();
         hash = hash * 31 + (Int32)Facing;
         hash = hash * 31 + Speed.GetHashCode();
+        hash = hash * 31 + ExistTime.GetHashCode();
         return hash;
       }
     }
@@ -788,21 +825,24 @@ namespace Quantum {
         var p = (BulletInfo*)ptr;
         serializer.Stream.Serialize((Int32*)&p->Facing);
         EntityRef.Serialize(&p->Owner, serializer);
+        FP.Serialize(&p->ExistTime, serializer);
         FP.Serialize(&p->Speed, serializer);
         FPVector2.Serialize(&p->Direction, serializer);
     }
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct PlayerInfo : Quantum.IComponent {
-    public const Int32 SIZE = 40;
+    public const Int32 SIZE = 48;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(4)]
     public PlayerRef PlayerRef;
-    [FieldOffset(16)]
-    public FP Damage;
     [FieldOffset(24)]
-    public FP Health;
+    public FP Damage;
     [FieldOffset(32)]
+    public FP Health;
+    [FieldOffset(16)]
+    public FP CurrentHealth;
+    [FieldOffset(40)]
     public FP Speed;
     [FieldOffset(8)]
     public AssetRef<EntityPrototype> Bullet;
@@ -814,6 +854,7 @@ namespace Quantum {
         hash = hash * 31 + PlayerRef.GetHashCode();
         hash = hash * 31 + Damage.GetHashCode();
         hash = hash * 31 + Health.GetHashCode();
+        hash = hash * 31 + CurrentHealth.GetHashCode();
         hash = hash * 31 + Speed.GetHashCode();
         hash = hash * 31 + Bullet.GetHashCode();
         hash = hash * 31 + (Int32)Facing;
@@ -825,6 +866,7 @@ namespace Quantum {
         serializer.Stream.Serialize((Int32*)&p->Facing);
         PlayerRef.Serialize(&p->PlayerRef, serializer);
         AssetRef.Serialize(&p->Bullet, serializer);
+        FP.Serialize(&p->CurrentHealth, serializer);
         FP.Serialize(&p->Damage, serializer);
         FP.Serialize(&p->Health, serializer);
         FP.Serialize(&p->Speed, serializer);
@@ -876,6 +918,8 @@ namespace Quantum {
       BuildSignalsArrayOnComponentRemoved<Quantum.AsteroidsShip>();
       BuildSignalsArrayOnComponentAdded<Quantum.AsteroidsShipRespawn>();
       BuildSignalsArrayOnComponentRemoved<Quantum.AsteroidsShipRespawn>();
+      BuildSignalsArrayOnComponentAdded<Quantum.BossInfo>();
+      BuildSignalsArrayOnComponentRemoved<Quantum.BossInfo>();
       BuildSignalsArrayOnComponentAdded<Quantum.BulletInfo>();
       BuildSignalsArrayOnComponentRemoved<Quantum.BulletInfo>();
       BuildSignalsArrayOnComponentAdded<CharacterController2D>();
@@ -1002,6 +1046,7 @@ namespace Quantum {
       typeRegistry.Register(typeof(Quantum.BitSet4096), Quantum.BitSet4096.SIZE);
       typeRegistry.Register(typeof(Quantum.BitSet512), Quantum.BitSet512.SIZE);
       typeRegistry.Register(typeof(Quantum.BitSet6), Quantum.BitSet6.SIZE);
+      typeRegistry.Register(typeof(Quantum.BossInfo), Quantum.BossInfo.SIZE);
       typeRegistry.Register(typeof(Quantum.BulletInfo), Quantum.BulletInfo.SIZE);
       typeRegistry.Register(typeof(Button), Button.SIZE);
       typeRegistry.Register(typeof(CallbackFlags), 4);
@@ -1080,13 +1125,14 @@ namespace Quantum {
       typeRegistry.Register(typeof(Quantum._globals_), Quantum._globals_.SIZE);
     }
     static partial void InitComponentTypeIdGen() {
-      ComponentTypeId.Reset(ComponentTypeId.BuiltInComponentCount + 7)
+      ComponentTypeId.Reset(ComponentTypeId.BuiltInComponentCount + 8)
         .AddBuiltInComponents()
         .Add<Quantum.AsteroidsAsteroid>(Quantum.AsteroidsAsteroid.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.AsteroidsPlayerLink>(Quantum.AsteroidsPlayerLink.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.AsteroidsProjectile>(Quantum.AsteroidsProjectile.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.AsteroidsShip>(Quantum.AsteroidsShip.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.AsteroidsShipRespawn>(Quantum.AsteroidsShipRespawn.Serialize, null, null, ComponentFlags.None)
+        .Add<Quantum.BossInfo>(Quantum.BossInfo.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.BulletInfo>(Quantum.BulletInfo.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.PlayerInfo>(Quantum.PlayerInfo.Serialize, null, null, ComponentFlags.None)
         .Finish();

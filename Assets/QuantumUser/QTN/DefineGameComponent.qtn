@@ -10,6 +10,7 @@ component PlayerInfo
 	player_ref PlayerRef;
 	FP Damage;
 	FP Health;
+	FP CurrentHealth;
 	FP Speed;
 	asset_ref<EntityPrototype> Bullet;
 	PlayerFacing Facing;
@@ -21,9 +22,19 @@ component BulletInfo
 	EntityRef Owner;
 	PlayerFacing Facing;
 	FP Speed;
+	FP ExistTime;
 }
 
 enum PlayerFacing
 {
 	Left, Right
+}
+
+component BossInfo
+{
+	FP Time;
+	FP ChangeDirectionTime;
+	FPVector2 Direction;
+	FP Health;
+	FP CurrentHealth;
 }

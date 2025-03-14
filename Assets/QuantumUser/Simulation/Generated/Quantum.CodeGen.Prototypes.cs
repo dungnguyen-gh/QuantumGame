@@ -129,12 +129,36 @@ namespace Quantum.Prototypes {
     }
   }
   [System.SerializableAttribute()]
+  [Quantum.Prototypes.Prototype(typeof(Quantum.BossInfo))]
+  public unsafe partial class BossInfoPrototype : ComponentPrototype<Quantum.BossInfo> {
+    public FP Time;
+    public FP ChangeDirectionTime;
+    public FPVector2 Direction;
+    public FP Health;
+    public FP CurrentHealth;
+    partial void MaterializeUser(Frame frame, ref Quantum.BossInfo result, in PrototypeMaterializationContext context);
+    public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
+        Quantum.BossInfo component = default;
+        Materialize((Frame)f, ref component, in context);
+        return f.Set(entity, component) == SetResult.ComponentAdded;
+    }
+    public void Materialize(Frame frame, ref Quantum.BossInfo result, in PrototypeMaterializationContext context = default) {
+        result.Time = this.Time;
+        result.ChangeDirectionTime = this.ChangeDirectionTime;
+        result.Direction = this.Direction;
+        result.Health = this.Health;
+        result.CurrentHealth = this.CurrentHealth;
+        MaterializeUser(frame, ref result, in context);
+    }
+  }
+  [System.SerializableAttribute()]
   [Quantum.Prototypes.Prototype(typeof(Quantum.BulletInfo))]
   public unsafe class BulletInfoPrototype : ComponentPrototype<Quantum.BulletInfo> {
     public FPVector2 Direction;
     public MapEntityId Owner;
     public Quantum.QEnum32<PlayerFacing> Facing;
     public FP Speed;
+    public FP ExistTime;
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.BulletInfo component = default;
         Materialize((Frame)f, ref component, in context);
@@ -145,6 +169,7 @@ namespace Quantum.Prototypes {
         PrototypeValidator.FindMapEntity(this.Owner, in context, out result.Owner);
         result.Facing = this.Facing;
         result.Speed = this.Speed;
+        result.ExistTime = this.ExistTime;
     }
   }
   [System.SerializableAttribute()]
@@ -175,6 +200,7 @@ namespace Quantum.Prototypes {
     public PlayerRef PlayerRef;
     public FP Damage;
     public FP Health;
+    public FP CurrentHealth;
     public FP Speed;
     public AssetRef<EntityPrototype> Bullet;
     public Quantum.QEnum32<PlayerFacing> Facing;
@@ -188,6 +214,7 @@ namespace Quantum.Prototypes {
         result.PlayerRef = this.PlayerRef;
         result.Damage = this.Damage;
         result.Health = this.Health;
+        result.CurrentHealth = this.CurrentHealth;
         result.Speed = this.Speed;
         result.Bullet = this.Bullet;
         result.Facing = this.Facing;
