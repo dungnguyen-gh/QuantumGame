@@ -314,11 +314,20 @@ MonoBehaviour:
       RawValue: 0
     ChangeDirectionTime:
       RawValue: 0
+    UseSkillTime:
+      RawValue: 0
     Direction:
       X:
         RawValue: 0
       Y:
         RawValue: 0
+    Health:
+      RawValue: 1310720
+    CurrentHealth:
+      RawValue: 1310720
+    Bullet:
+      Id:
+        Value: 1529166171664441967
 --- !u!114 &8480983198535496692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428,7 +437,7 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 20000
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &7790236653135328643
 MonoBehaviour:
@@ -475,6 +484,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6722640171182675557}
     m_Modifications:
+    - target: {fileID: 517007142076907996, guid: e3ef5e7f95a3d8b47b1650bb22f238a3, type: 3}
+      propertyPath: m_text
+      value: Level5. Dragon
+      objectReference: {fileID: 0}
+    - target: {fileID: 2043519898551605609, guid: e3ef5e7f95a3d8b47b1650bb22f238a3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 4881138369532549186, guid: e3ef5e7f95a3d8b47b1650bb22f238a3, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.74

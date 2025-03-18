@@ -23,8 +23,12 @@ namespace Quantum
             {
                 filter.Body->Velocity = filter.Bullet->Speed * FPVector2.Right;
             }
-        }
 
-        
+            filter.Bullet->ExistTime -= frame.DeltaTime;
+            if(filter.Bullet->ExistTime < 0)
+            {
+                frame.Destroy(filter.Entity);
+            }
+        }
     }
 }

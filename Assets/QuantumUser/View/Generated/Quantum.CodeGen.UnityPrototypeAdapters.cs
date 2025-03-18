@@ -63,6 +63,23 @@ namespace Quantum.Prototypes.Unity {
     }
   }
   [System.SerializableAttribute()]
+  public unsafe partial class BossBulletInfoPrototype : Quantum.QuantumUnityPrototypeAdapter<Quantum.Prototypes.BossBulletInfoPrototype> {
+    public FP Speed;
+    public FPVector2 Direction;
+    public Quantum.QuantumEntityPrototype Owner;
+    public FP ExistTime;
+    partial void ConvertUser(Quantum.QuantumEntityPrototypeConverter converter, ref Quantum.Prototypes.BossBulletInfoPrototype prototype);
+    public override Quantum.Prototypes.BossBulletInfoPrototype Convert(Quantum.QuantumEntityPrototypeConverter converter) {
+      var result = new Quantum.Prototypes.BossBulletInfoPrototype();
+      converter.Convert(this.Speed, out result.Speed);
+      converter.Convert(this.Direction, out result.Direction);
+      converter.Convert(this.Owner, out result.Owner);
+      converter.Convert(this.ExistTime, out result.ExistTime);
+      ConvertUser(converter, ref result);
+      return result;
+    }
+  }
+  [System.SerializableAttribute()]
   public unsafe partial class BulletInfoPrototype : Quantum.QuantumUnityPrototypeAdapter<Quantum.Prototypes.BulletInfoPrototype> {
     public FPVector2 Direction;
     public Quantum.QuantumEntityPrototype Owner;

@@ -18,6 +18,7 @@ namespace Quantum
 
         public void SetValue(float value)
         {
+            if (value < 0) value = 0;
             scale.x = value;
             transformValue.localScale = scale;
         }

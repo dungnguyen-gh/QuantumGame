@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2196779298258708743}
   - component: {fileID: 3217735140783290583}
   - component: {fileID: 1518328306144350328}
+  - component: {fileID: 6907489352343169809}
   m_Layer: 0
   m_Name: Spine Mecanim GameObject (Knight)
   m_TagString: Untagged
@@ -145,6 +146,18 @@ MonoBehaviour:
     useCustomMixMode: 1
     layerMixModes: 01000000
     layerBlendModes: 01000000
+--- !u!114 &6907489352343169809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7987663118457580285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0917c14c781dbec44be6bd533f8a9b4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9147954761643657763
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,14 +473,16 @@ MonoBehaviour:
     Damage:
       RawValue: 131072
     Health:
-      RawValue: 1310720
+      RawValue: 327680
+    CurrentHealth:
+      RawValue: 327680
     Speed:
       RawValue: 196608
     Bullet:
       Id:
         Value: 1404732345030836519
     Facing:
-      Value: 1
+      Value: 0
 --- !u!114 &7582295720244002958
 MonoBehaviour:
   m_ObjectHideFlags: 0

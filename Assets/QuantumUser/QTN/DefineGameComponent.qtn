@@ -34,7 +34,30 @@ component BossInfo
 {
 	FP Time;
 	FP ChangeDirectionTime;
+	FP UseSkillTime;
 	FPVector2 Direction;
 	FP Health;
 	FP CurrentHealth;
+	asset_ref<EntityPrototype> Bullet;
 }
+
+component BossBulletInfo
+{
+	FP Speed;
+	FPVector2 Direction;
+	EntityRef Owner;
+	FP ExistTime;
+}
+
+enum GameState
+{
+	Playing, Win, Lose
+}
+
+global
+{
+	GameState CurrentGameState;
+}
+
+signal OnPlayerDead();
+signal OnBossDead();

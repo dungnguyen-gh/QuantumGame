@@ -2,11 +2,12 @@ namespace Quantum
 {
     using Photon.Deterministic;
     using Spine.Unity;
+    using TMPro;
     using UnityEngine;
 
     public enum AnimationName
     {
-        Idle, Walk, Attack
+        Idle, Walk, Attack, Dead
     }
 
     public unsafe class PlayerView : QuantumEntityViewComponent
@@ -14,6 +15,7 @@ namespace Quantum
         public const string ANIM_IDLE = "Idle";
         public const string ANIM_WALK = "Walk";
         public const string ANIM_ATTACK = "Attack";
+        public const string ANIM_DEAD = "Dead";
 
         public Quaternion rotationLeft;
         public Quaternion rotationRight;
@@ -27,9 +29,16 @@ namespace Quantum
 
         public bool spawnBullet = false;
 
+        private HealthBar healthBar;
+
+        private TextMeshPro textName;
+
         private void Awake()
         {
             animator = GetComponentInChildren<Animator>();
+            healthBar = GetComponentInChildren<HealthBar>();
+            textName = GetComponentInChildren<TextMeshPro>();
+            textName.text = "";
             QuantumCallback.Subscribe(this, (CallbackPollInput callback) => PollInput(callback));
         }
         private void Update()
@@ -38,12 +47,25 @@ namespace Quantum
 
             body = PredictedFrame.Get<PhysicsBody2D>(_entityView.EntityRef);
 
-            if (body.Velocity != FPVector2.Zero && currentAnim != AnimationName.Attack)
+            if (body.Velocity != FPVector2.Zero && currentAnim != AnimationName.Attack && currentAnim != AnimationName.Dead)
             {
                 animator.Play(ANIM_WALK);
             }
 
             playerInfo = VerifiedFrame.Get<PlayerInfo>(_entityView.EntityRef);
+            if (textName.text == "")
+            {
+                var playerData = VerifiedFrame.GetPlayerData(playerInfo.PlayerRef);
+                textName.text = playerData.PlayerNickname;
+            }
+
+            if (playerInfo.CurrentHealth <= 0)
+            {
+                animator.Play(ANIM_DEAD);
+                healthBar.gameObject.SetActive(false);
+                return;
+            }
+
             var input = VerifiedFrame.GetPlayerInput(playerInfo.PlayerRef);
             if (input->Attack.WasPressed)
             {
@@ -58,6 +80,20 @@ namespace Quantum
             {
                 animator.transform.rotation = rotationLeft;
             }
+
+            if (playerInfo.Health == 0)
+            {
+                healthBar.SetValue(0);
+            }
+            else
+            {
+                healthBar.SetValue((playerInfo.CurrentHealth / playerInfo.Health).AsFloat);
+            }
+
+            if (QuantumRunner.DefaultGame.PlayerIsLocal(playerInfo.PlayerRef))
+            {
+                Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, Camera.main.transform.position.z);
+            }
         }
 
         private AnimationName GetCurrentAnimation()
@@ -65,6 +101,7 @@ namespace Quantum
             var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (stateInfo.IsName(ANIM_ATTACK)) return AnimationName.Attack;
             else if (stateInfo.IsName(ANIM_WALK)) return AnimationName.Walk;
+            else if (stateInfo.IsName(ANIM_DEAD)) return AnimationName.Dead;
             return AnimationName.Idle;
         }
 

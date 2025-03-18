@@ -129,13 +129,34 @@ namespace Quantum.Prototypes {
     }
   }
   [System.SerializableAttribute()]
+  [Quantum.Prototypes.Prototype(typeof(Quantum.BossBulletInfo))]
+  public unsafe class BossBulletInfoPrototype : ComponentPrototype<Quantum.BossBulletInfo> {
+    public FP Speed;
+    public FPVector2 Direction;
+    public MapEntityId Owner;
+    public FP ExistTime;
+    public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
+        Quantum.BossBulletInfo component = default;
+        Materialize((Frame)f, ref component, in context);
+        return f.Set(entity, component) == SetResult.ComponentAdded;
+    }
+    public void Materialize(Frame frame, ref Quantum.BossBulletInfo result, in PrototypeMaterializationContext context = default) {
+        result.Speed = this.Speed;
+        result.Direction = this.Direction;
+        PrototypeValidator.FindMapEntity(this.Owner, in context, out result.Owner);
+        result.ExistTime = this.ExistTime;
+    }
+  }
+  [System.SerializableAttribute()]
   [Quantum.Prototypes.Prototype(typeof(Quantum.BossInfo))]
   public unsafe partial class BossInfoPrototype : ComponentPrototype<Quantum.BossInfo> {
     public FP Time;
     public FP ChangeDirectionTime;
+    public FP UseSkillTime;
     public FPVector2 Direction;
     public FP Health;
     public FP CurrentHealth;
+    public AssetRef<EntityPrototype> Bullet;
     partial void MaterializeUser(Frame frame, ref Quantum.BossInfo result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.BossInfo component = default;
@@ -145,9 +166,11 @@ namespace Quantum.Prototypes {
     public void Materialize(Frame frame, ref Quantum.BossInfo result, in PrototypeMaterializationContext context = default) {
         result.Time = this.Time;
         result.ChangeDirectionTime = this.ChangeDirectionTime;
+        result.UseSkillTime = this.UseSkillTime;
         result.Direction = this.Direction;
         result.Health = this.Health;
         result.CurrentHealth = this.CurrentHealth;
+        result.Bullet = this.Bullet;
         MaterializeUser(frame, ref result, in context);
     }
   }
